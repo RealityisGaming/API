@@ -30,20 +30,26 @@ guide_schema = GuideSchema()
 guides_schema = GuideSchema(many=True)
 
 #end point to create a new guide
-@app.route('/guide', mthods=["POST"])
+@app.route('/guide', methods=["POST"])
 def add_guide():
     title = request.json['title']
     content = request.json['content']
 
-    new_guide = Guide(titel, content)
+    new_guide = Guide(title, content)
 
     db.session.add(new_guide)
     db.session.commit()
 
     guide = Guide.query.get(new_guide.id)
 
-    return guide.schema.jsonify(guide)
+    return guide_schema.jsonify(guide)
 
+@app.route("/guides", methods=["GET"])
+def get_guides():
+    all_guides = Guide.query.all(
+    result = guides_schema.dump(all_guides)
+    return jsonify(result.data)
 
+    
 if __name__ == '__main__':
     app.run(debug=True)
